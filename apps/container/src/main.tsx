@@ -2,6 +2,8 @@ import { RouterProvider, createRouter } from "@tanstack/solid-router";
 import { render } from "solid-js/web";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
+import { TanStackDevtools } from "@tanstack/solid-devtools";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/solid-router-devtools";
 
 const router = createRouter({
   routeTree,
@@ -16,5 +18,19 @@ declare module "@tanstack/solid-router" {
 }
 
 const rootElement = document.getElementById("app");
-if (!rootElement) throw new Error("Missing #app element");
-render(() => <RouterProvider router={router} />, rootElement);
+render(
+  () => (
+    <>
+      <RouterProvider router={router} />
+      <TanStackDevtools
+        plugins={[
+          {
+            name: "TanStack Router",
+            render: <TanStackRouterDevtoolsPanel router={router} />,
+          },
+        ]}
+      />
+    </>
+  ),
+  rootElement!
+);

@@ -11,11 +11,15 @@
   "dependencies": {
     "@morph/plugins": "workspace:*",
     "@morph/router": "workspace:*",
-    "@tanstack/solid-router": "1.168.26",
+    "@tanstack/solid-router": "1.170.27",
+    "@tanstack/solid-router-devtools": "^1.167.1",
     "solid-js": "^1.9.14"
   },
   "devDependencies": {
+    "@neodrag/core": "3.0.0-next.11",
+    "@tanstack/devtools-vite": "^0.8.3",
     "@tanstack/router-plugin": "1.168.26",
+    "@tanstack/solid-devtools": "^0.8.10",
     "@types/node": "^24.13.3",
     "typescript": "^5.9.2",
     "vite": "^8.2.1",
