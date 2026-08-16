@@ -1,0 +1,22 @@
+{
+  "name": "@morph/plugins",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit -p tsconfig.manifest.json",
+    "check-types": "tsc --noEmit -p tsconfig.manifest.json"
+  },
+  "dependencies": {
+    "@morph/router": "workspace:*",
+    "@tanstack/solid-router": "1.168.26",
+    "solid-js": "^1.9.14"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.2"
+  }
+}
