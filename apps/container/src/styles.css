@@ -124,6 +124,30 @@ code {
   font-weight: 700;
   text-decoration: none;
 }
+.post-list {
+  display: grid;
+  overflow: hidden;
+  margin-top: 28px;
+  border: 1px solid rgb(32 33 31 / 12%);
+  border-radius: 16px;
+}
+.post-row {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  text-decoration: none;
+}
+.post-row + .post-row {
+  border-top: 1px solid rgb(32 33 31 / 10%);
+}
+.post-row:hover {
+  background: rgb(255 255 255 / 68%);
+}
+.post-row span {
+  color: #686a64;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
 footer {
   padding: 24px 0 32px;
   color: #888a83;

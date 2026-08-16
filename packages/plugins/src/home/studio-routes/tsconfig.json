@@ -1,0 +1,4 @@
+{
+  "extends": "../../../tsconfig.studio.json",
+  "include": ["./*.tsx", "../../../../../apps/studio/src/routeTree.gen.ts"]
+}

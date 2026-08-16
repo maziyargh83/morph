@@ -1,24 +1,25 @@
 {
-  "name": "@morph/container",
+  "name": "@morph/studio",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "check-types": "tsc --noEmit",
-    "dev": "vite"
+    "build": "vite build && node ./route-tree-generator.ts",
+    "check-types": "node ./route-tree-generator.ts && tsc --noEmit",
+    "dev": "vite dev --port 3001"
   },
   "dependencies": {
     "@morph/plugins": "workspace:*",
     "@morph/router": "workspace:*",
     "@tanstack/solid-router": "1.170.16",
     "@tanstack/solid-router-devtools": "1.167.0",
+    "@tanstack/solid-start": "1.168.26",
     "solid-js": "^1.9.14"
   },
   "devDependencies": {
     "@neodrag/core": "3.0.0-next.11",
     "@tanstack/devtools-vite": "^0.8.3",
-    "@tanstack/router-plugin": "1.168.26",
+    "@tanstack/router-generator": "1.167.17",
     "@tanstack/solid-devtools": "^0.8.10",
     "@types/node": "^24.13.3",
     "typescript": "^5.9.2",

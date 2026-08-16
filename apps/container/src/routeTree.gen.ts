@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './../../../packages/plugins/src/home/routes/index'
 import { Route as AboutRouteImport } from './../../../packages/plugins/src/home/routes/about'
+import { Route as PostsIndexRouteImport } from './../../../packages/plugins/src/posts/routes/index'
+import { Route as PostsSlugRouteImport } from './../../../packages/plugins/src/posts/routes/$slug'
 import { Route as ProfileIndexRouteImport } from './../../../packages/plugins/src/profile/routes/index'
 import { Route as ProfileSettingsRouteImport } from './../../../packages/plugins/src/profile/routes/settings'
 import { Route as ShopIndexRouteImport } from './../../../packages/plugins/src/shop/routes/index'
@@ -24,6 +26,16 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsIndexRoute = PostsIndexRouteImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsSlugRoute = PostsSlugRouteImport.update({
+  id: '/posts/$slug',
+  path: '/posts/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileIndexRoute = ProfileIndexRouteImport.update({
@@ -50,7 +62,9 @@ const ShopProductDotidRoute = ShopProductDotidRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
+  '/posts/': typeof PostsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/shop/product/$id': typeof ShopProductDotidRoute
@@ -58,7 +72,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
+  '/posts': typeof PostsIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/shop': typeof ShopIndexRoute
   '/shop/product/$id': typeof ShopProductDotidRoute
@@ -67,7 +83,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
+  '/posts/': typeof PostsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/shop/product/$id': typeof ShopProductDotidRoute
@@ -77,7 +95,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/posts/$slug'
     | '/profile/settings'
+    | '/posts/'
     | '/profile/'
     | '/shop/'
     | '/shop/product/$id'
@@ -85,7 +105,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/posts/$slug'
     | '/profile/settings'
+    | '/posts'
     | '/profile'
     | '/shop'
     | '/shop/product/$id'
@@ -93,7 +115,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/posts/$slug'
     | '/profile/settings'
+    | '/posts/'
     | '/profile/'
     | '/shop/'
     | '/shop/product/$id'
@@ -102,7 +126,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  PostsSlugRoute: typeof PostsSlugRoute
   ProfileSettingsRoute: typeof ProfileSettingsRoute
+  PostsIndexRoute: typeof PostsIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ShopProductDotidRoute: typeof ShopProductDotidRoute
@@ -122,6 +148,20 @@ declare module '@tanstack/solid-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/': {
+      id: '/posts/'
+      path: '/posts'
+      fullPath: '/posts/'
+      preLoaderRoute: typeof PostsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/$slug': {
+      id: '/posts/$slug'
+      path: '/posts/$slug'
+      fullPath: '/posts/$slug'
+      preLoaderRoute: typeof PostsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile/': {
@@ -158,7 +198,9 @@ declare module '@tanstack/solid-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  PostsSlugRoute: PostsSlugRoute,
   ProfileSettingsRoute: ProfileSettingsRoute,
+  PostsIndexRoute: PostsIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   ShopIndexRoute: ShopIndexRoute,
   ShopProductDotidRoute: ShopProductDotidRoute,

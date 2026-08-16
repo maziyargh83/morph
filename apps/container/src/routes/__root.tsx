@@ -34,6 +34,9 @@ function RootLayout() {
           <Link activeProps={{ class: "active" }} to="/shop">
             Shop
           </Link>
+          <Link activeProps={{ class: "active" }} to="/posts">
+            Posts
+          </Link>
           <Link activeProps={{ class: "active" }} to="/profile">
             Profile
           </Link>
@@ -45,7 +48,7 @@ function RootLayout() {
       <main>
         <Outlet />
       </main>
-      <footer>Three plugins · one generated tree</footer>
+      <footer>Four plugins · one generated tree</footer>
     </div>
   );
 }

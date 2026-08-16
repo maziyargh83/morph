@@ -1,13 +1,15 @@
 import { fileURLToPath } from "node:url";
-import { plugins } from "@morph/plugins";
-import { createPluginRouteConfig } from "@morph/router";
+import { pluginCatalog } from "@morph/plugins";
+import { createPluginRegistry, createPluginRouteConfig } from "@morph/router";
 
 export const routesDirectory = fileURLToPath(
-  new URL("./src/routes", import.meta.url)
+  new URL("./src/routes", import.meta.url),
 );
 
+export const pluginRegistry = createPluginRegistry("client", pluginCatalog);
+
 export const virtualRouteConfig = createPluginRouteConfig({
-  plugins,
+  registry: pluginRegistry,
   rootFile: "__root.tsx",
   routesDirectory,
 });
