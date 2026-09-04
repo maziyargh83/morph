@@ -2,8 +2,10 @@ import { Show, createSignal, onMount } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
 import type { Post } from "../content.ts";
 import { getPost } from "../graphql-client.ts";
+import { requireClientPageAccess } from "../../auth/client-guard.ts";
 
 export const Route = createFileRoute("/posts/$slug")({
+  beforeLoad: () => requireClientPageAccess("/posts/$slug"),
   component: PublicPost,
 });
 

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { createServerFn } from "@tanstack/solid-start";
+import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 const getServerSnapshot = createServerFn({ method: "GET" }).handler(
   async () => ({
@@ -11,6 +12,7 @@ const getServerSnapshot = createServerFn({ method: "GET" }).handler(
 );
 
 export const Route = createFileRoute("/activity")({
+  beforeLoad: () => requireStudioPageAccess("/activity"),
   loader: () => getServerSnapshot(),
   head: () => ({ meta: [{ title: "Activity · Morph Studio" }] }),
   component: ActivityPage,

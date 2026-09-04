@@ -3,10 +3,15 @@ import {
   index,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+
+export const accessRoleValues = ["user", "editor", "admin"] as const;
+export type AccessRole = (typeof accessRoleValues)[number];
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -20,9 +25,7 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  role: text("role", { enum: ["user", "editor", "admin"] })
-    .notNull()
-    .default("user"),
+  role: text("role", { enum: accessRoleValues }).notNull().default("user"),
   banned: boolean("banned").notNull().default(false),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires", { withTimezone: true }),
@@ -123,12 +126,40 @@ export const post = pgTable("post", {
     .defaultNow(),
 });
 
+export const pageHost = pgEnum("page_host", ["client", "studio"]);
+export const pageAccessMode = pgEnum("page_access_mode", [
+  "public",
+  "authenticated",
+  "roles",
+]);
+
+export const pageAccess = pgTable(
+  "page_access",
+  {
+    host: pageHost("host").notNull(),
+    path: text("path").notNull(),
+    mode: pageAccessMode("mode").notNull(),
+    roles: text("roles", { enum: accessRoleValues })
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    updatedBy: text("updated_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.host, table.path] })],
+);
+
 export const databaseSchema = {
   user,
   session,
   account,
   verification,
   post,
+  pageAccess,
 };
 
 export type DatabaseUser = typeof user.$inferSelect;

@@ -1,4 +1,4 @@
-import { definePluginCatalog } from "@morph/router";
+import { createPluginPageCatalog, definePluginCatalog } from "@morph/router";
 import { authPlugin } from "./auth/main.ts";
 import { homePlugin } from "./home/main.ts";
 import { postsPlugin } from "./posts/main.ts";
@@ -13,6 +13,8 @@ export const pluginCatalog = definePluginCatalog([
   profilePlugin,
   shopPlugin,
 ]);
+
+export const pluginPages = createPluginPageCatalog(pluginCatalog);
 
 /** Common generator boundary for package-owned route contributions. */
 export const pluginRoutesDirectory = new URL("./", import.meta.url);

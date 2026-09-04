@@ -1,6 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/solid-router";
+import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: () => requireStudioPageAccess("/"),
   head: () => ({ meta: [{ title: "Overview · Morph Studio" }] }),
   component: StudioOverview,
 });

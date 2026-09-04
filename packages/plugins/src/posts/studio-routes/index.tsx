@@ -2,8 +2,10 @@ import { For, createSignal, onMount } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
 import type { Post } from "../content.ts";
 import { listPosts } from "../graphql-client.ts";
+import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 export const Route = createFileRoute("/posts/")({
+  beforeLoad: () => requireStudioPageAccess("/posts"),
   head: () => ({ meta: [{ title: "Posts · Morph Studio" }] }),
   component: StudioPosts,
 });

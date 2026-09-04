@@ -3,6 +3,22 @@ import { fileURLToPath } from "node:url";
 import { physical, rootRoute } from "@tanstack/virtual-file-routes";
 
 export type MorphHost = "client" | "studio";
+export type PageAccessMode = "public" | "authenticated" | "roles";
+
+export interface PluginPage {
+  /** Stable application URL pattern, including dynamic `$param` segments. */
+  path: `/${string}`;
+  label: string;
+  defaultAccess:
+    | { mode: "public" | "authenticated"; roles?: never }
+    | { mode: "roles"; roles: readonly string[] };
+}
+
+export interface PluginPageDefinition extends PluginPage {
+  key: `${MorphHost}:${string}`;
+  host: MorphHost;
+  plugin: string;
+}
 
 export interface PluginRoutes {
   /** Absolute path, file URL, or path relative to the aggregator's routesDirectory. */
@@ -13,6 +29,8 @@ export interface PluginRoutes {
 
 export interface PluginApplication {
   routes?: PluginRoutes;
+  /** Configurable pages. System routes such as login should be omitted. */
+  pages?: readonly PluginPage[];
 }
 
 export type PluginApplications = Partial<Record<MorphHost, PluginApplication>>;
@@ -69,7 +87,25 @@ export function definePluginCatalog<
   const TPlugins extends readonly MorphPlugin[],
 >(plugins: TPlugins): PluginCatalog<TPlugins> {
   assertUniquePluginNames(plugins);
+  assertUniquePages(plugins);
   return { plugins };
+}
+
+/** Flatten plugin-owned page metadata for API and Studio consumers. */
+export function createPluginPageCatalog(
+  catalog: PluginCatalog,
+): readonly PluginPageDefinition[] {
+  return catalog.plugins.flatMap((plugin) =>
+    (Object.entries(plugin.apps) as [MorphHost, PluginApplication][]).flatMap(
+      ([host, application]) =>
+        (application.pages ?? []).map((page) => ({
+          ...page,
+          key: `${host}:${page.path}` as const,
+          host,
+          plugin: plugin.name,
+        })),
+    ),
+  );
 }
 
 /** Select only one app's contributions without importing its route modules. */
@@ -155,5 +191,29 @@ function assertUniquePluginNames(plugins: readonly { name: string }[]) {
       throw new Error(`Duplicate plugin name: ${plugin.name}`);
     }
     names.add(plugin.name);
+  }
+}
+
+function assertUniquePages(plugins: readonly MorphPlugin[]) {
+  const keys = new Set<string>();
+
+  for (const plugin of plugins) {
+    for (const [host, application] of Object.entries(plugin.apps)) {
+      for (const page of application?.pages ?? []) {
+        if (!page.path.startsWith("/") || !page.label.trim()) {
+          throw new Error(`Invalid page metadata in plugin ${plugin.name}`);
+        }
+        if (
+          page.defaultAccess.mode === "roles" &&
+          page.defaultAccess.roles.length === 0
+        ) {
+          throw new Error(`Page ${host}:${page.path} needs at least one role`);
+        }
+
+        const key = `${host}:${page.path}`;
+        if (keys.has(key)) throw new Error(`Duplicate plugin page: ${key}`);
+        keys.add(key);
+      }
+    }
   }
 }

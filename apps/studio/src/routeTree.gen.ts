@@ -19,6 +19,7 @@ import { Route as AuthIndexRouteImport } from './../../../packages/plugins/src/a
 import { Route as ProjectsDotprojectIdRouteImport } from './../../../packages/plugins/src/home/studio-routes/projects.$projectId'
 import { Route as PostsNewRouteImport } from './../../../packages/plugins/src/posts/studio-routes/new'
 import { Route as AuthLoginRouteImport } from './../../../packages/plugins/src/auth/studio-routes/login'
+import { Route as AuthDeniedRouteImport } from './../../../packages/plugins/src/auth/studio-routes/denied'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -70,12 +71,18 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthDeniedRoute = AuthDeniedRouteImport.update({
+  id: '/auth/denied',
+  path: '/auth/denied',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/auth/denied': typeof AuthDeniedRoute
   '/auth/login': typeof AuthLoginRoute
   '/posts/new': typeof PostsNewRoute
   '/projects/$projectId': typeof ProjectsDotprojectIdRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/settings': typeof SettingsRoute
+  '/auth/denied': typeof AuthDeniedRoute
   '/auth/login': typeof AuthLoginRoute
   '/posts/new': typeof PostsNewRoute
   '/projects/$projectId': typeof ProjectsDotprojectIdRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/activity': typeof ActivityRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/auth/denied': typeof AuthDeniedRoute
   '/auth/login': typeof AuthLoginRoute
   '/posts/new': typeof PostsNewRoute
   '/projects/$projectId': typeof ProjectsDotprojectIdRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/projects'
     | '/settings'
+    | '/auth/denied'
     | '/auth/login'
     | '/posts/new'
     | '/projects/$projectId'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activity'
     | '/settings'
+    | '/auth/denied'
     | '/auth/login'
     | '/posts/new'
     | '/projects/$projectId'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/projects'
     | '/settings'
+    | '/auth/denied'
     | '/auth/login'
     | '/posts/new'
     | '/projects/$projectId'
@@ -150,6 +162,7 @@ export interface RootRouteChildren {
   ActivityRoute: typeof ActivityRoute
   ProjectsRoute: typeof ProjectsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
+  AuthDeniedRoute: typeof AuthDeniedRoute
   AuthLoginRoute: typeof AuthLoginRoute
   PostsNewRoute: typeof PostsNewRoute
   AuthIndexRoute: typeof AuthIndexRoute
@@ -228,6 +241,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/denied': {
+      id: '/auth/denied'
+      path: '/auth/denied'
+      fullPath: '/auth/denied'
+      preLoaderRoute: typeof AuthDeniedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -250,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityRoute: ActivityRoute,
   ProjectsRoute: ProjectsRouteWithChildren,
   SettingsRoute: SettingsRoute,
+  AuthDeniedRoute: AuthDeniedRoute,
   AuthLoginRoute: AuthLoginRoute,
   PostsNewRoute: PostsNewRoute,
   AuthIndexRoute: AuthIndexRoute,

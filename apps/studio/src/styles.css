@@ -465,6 +465,122 @@ p {
   font: inherit;
 }
 
+.access-section {
+  display: grid;
+  gap: 22px;
+  margin-top: 18px;
+}
+
+.access-section h2 {
+  margin: 4px 0 8px;
+}
+
+.access-section p {
+  margin: 0;
+  color: #a8abb3;
+}
+
+.access-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+
+.access-card {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid rgb(235 237 240 / 12%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 3%);
+}
+
+.access-card header,
+.access-card footer,
+.access-card footer > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.access-card header > div {
+  display: grid;
+  gap: 7px;
+}
+
+.access-card code {
+  width: fit-content;
+  font-size: 0.72rem;
+}
+
+.access-source {
+  color: #777b85;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.access-card > label {
+  display: grid;
+  gap: 7px;
+  color: #a8abb3;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.access-card select {
+  padding: 10px 12px;
+  border: 1px solid rgb(235 237 240 / 14%);
+  border-radius: 9px;
+  color: #ebedf0;
+  background: #20232b;
+  font: inherit;
+}
+
+.role-options {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 1px solid rgb(235 237 240 / 10%);
+}
+
+.role-options legend {
+  padding: 0 0 9px;
+  color: #777b85;
+  font-size: 0.72rem;
+}
+
+.role-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.access-card footer {
+  margin-top: auto;
+  padding: 14px 0 0;
+  border-top: 1px solid rgb(235 237 240 / 10%);
+}
+
+.access-card footer small {
+  color: #777b85;
+}
+
+.access-card .button.compact {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  cursor: pointer;
+}
+
+.access-card button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

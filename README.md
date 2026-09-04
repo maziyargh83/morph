@@ -25,10 +25,18 @@ The auth plugin provides:
 - Studio sign-in and user/role management under `/auth`
 - Better Auth sessions persisted in PostgreSQL
 - `user`, `editor`, and `admin` roles with typed post permissions
+- database-backed page policies managed from the Studio access screen
 
 GraphQL reads the Better Auth session cookie. Public users can read published
 posts; editors and admins can read drafts and create posts. The Studio user list
 and role changes require an admin session.
+
+Each non-system page is declared by its owning plugin with a default access
+mode. An admin can open Studio `/auth` and override it as public, available to
+any authenticated user, or restricted to selected roles. Client guards run
+before navigation, Studio guards run during SSR, and GraphQL remains the final
+authorization boundary. Login, access management, and access-denied routes are
+system routes and cannot be overridden, preventing accidental lockout.
 
 ## Local setup
 

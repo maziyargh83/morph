@@ -2,6 +2,14 @@ import { For, Show, createSignal, onMount } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
 import { authClient } from "../client.ts";
 import type { AccessRole } from "../access.ts";
+import {
+  listPageAccess,
+  resetPageAccess,
+  savePageAccess,
+  type PageAccess,
+  type PageAccessMode,
+  type PageRole,
+} from "../page-access-client.ts";
 
 type ListedUser = {
   id: string;
@@ -18,9 +26,11 @@ export const Route = createFileRoute("/auth/")({
 
 function AccessPage() {
   const [users, setUsers] = createSignal<ListedUser[]>([]);
+  const [pages, setPages] = createSignal<PageAccess[]>([]);
   const [viewerRole, setViewerRole] = createSignal("user");
   const [loaded, setLoaded] = createSignal(false);
   const [error, setError] = createSignal<string>();
+  const [savingPage, setSavingPage] = createSignal<string>();
 
   const load = async () => {
     setError(undefined);
@@ -33,12 +43,26 @@ function AccessPage() {
       return;
     }
 
-    const result = await authClient.admin.listUsers({
-      query: { limit: 100, sortBy: "name", sortDirection: "asc" },
-    });
-    if (result.error) setError(result.error.message ?? "Could not load users.");
-    else setUsers(result.data?.users ?? []);
-    setLoaded(true);
+    try {
+      const [usersResult, pageResult] = await Promise.all([
+        authClient.admin.listUsers({
+          query: { limit: 100, sortBy: "name", sortDirection: "asc" },
+        }),
+        listPageAccess(),
+      ]);
+      if (usersResult.error) {
+        setError(usersResult.error.message ?? "Could not load users.");
+      } else {
+        setUsers(usersResult.data?.users ?? []);
+      }
+      setPages(pageResult);
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not load access data.",
+      );
+    } finally {
+      setLoaded(true);
+    }
   };
 
   onMount(load);
@@ -50,6 +74,57 @@ function AccessPage() {
       return;
     }
     await load();
+  };
+
+  const updatePage = (key: string, patch: Partial<PageAccess>) => {
+    setPages((current) =>
+      current.map((page) => (page.key === key ? { ...page, ...patch } : page)),
+    );
+  };
+
+  const togglePageRole = (
+    page: PageAccess,
+    role: PageRole,
+    checked: boolean,
+  ) => {
+    const roles = checked
+      ? [...new Set([...page.roles, role])]
+      : page.roles.filter((current) => current !== role);
+    updatePage(page.key, { roles });
+  };
+
+  const savePolicy = async (page: PageAccess) => {
+    setError(undefined);
+    setSavingPage(page.key);
+    try {
+      const saved = await savePageAccess({
+        host: page.host,
+        path: page.path,
+        mode: page.mode,
+        roles: page.mode === "roles" ? page.roles : [],
+      });
+      updatePage(page.key, saved);
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not save page access.",
+      );
+    } finally {
+      setSavingPage(undefined);
+    }
+  };
+
+  const resetPolicy = async (page: PageAccess) => {
+    setError(undefined);
+    setSavingPage(page.key);
+    try {
+      updatePage(page.key, await resetPageAccess(page.host, page.path));
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not reset page access.",
+      );
+    } finally {
+      setSavingPage(undefined);
+    }
   };
 
   return (
@@ -104,6 +179,103 @@ function AccessPage() {
               )}
             </For>
           </div>
+
+          <section class="access-section">
+            <div>
+              <p class="eyebrow">Plugin page catalog</p>
+              <h2>Page policies</h2>
+              <p>
+                Override the access declared by each plugin. Auth system pages
+                are intentionally excluded to prevent lockout.
+              </p>
+            </div>
+
+            <div class="access-grid">
+              <For each={pages()}>
+                {(page) => (
+                  <article class="access-card">
+                    <header>
+                      <div>
+                        <strong>{page.label}</strong>
+                        <code>{page.path}</code>
+                      </div>
+                      <span class="access-source">
+                        {page.host} · {page.plugin}
+                      </span>
+                    </header>
+
+                    <label>
+                      <span>Access mode</span>
+                      <select
+                        value={page.mode}
+                        onChange={(event) =>
+                          updatePage(page.key, {
+                            mode: event.currentTarget.value as PageAccessMode,
+                          })
+                        }
+                      >
+                        <option value="public">Public</option>
+                        <option value="authenticated">
+                          Any signed-in user
+                        </option>
+                        <option value="roles">Selected roles</option>
+                      </select>
+                    </label>
+
+                    <Show when={page.mode === "roles"}>
+                      <fieldset class="role-options">
+                        <legend>Allowed roles</legend>
+                        <For each={["user", "editor", "admin"] as PageRole[]}>
+                          {(role) => (
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={page.roles.includes(role)}
+                                onChange={(event) =>
+                                  togglePageRole(
+                                    page,
+                                    role,
+                                    event.currentTarget.checked,
+                                  )
+                                }
+                              />
+                              <span>{role}</span>
+                            </label>
+                          )}
+                        </For>
+                      </fieldset>
+                    </Show>
+
+                    <footer>
+                      <small>
+                        {page.customized ? "Customized" : "Plugin default"}
+                      </small>
+                      <div>
+                        <Show when={page.customized}>
+                          <button
+                            class="text-button"
+                            type="button"
+                            disabled={savingPage() === page.key}
+                            onClick={() => resetPolicy(page)}
+                          >
+                            Reset
+                          </button>
+                        </Show>
+                        <button
+                          class="button compact"
+                          type="button"
+                          disabled={savingPage() === page.key}
+                          onClick={() => savePolicy(page)}
+                        >
+                          {savingPage() === page.key ? "Saving…" : "Save"}
+                        </button>
+                      </div>
+                    </footer>
+                  </article>
+                )}
+              </For>
+            </div>
+          </section>
         </Show>
       </Show>
 

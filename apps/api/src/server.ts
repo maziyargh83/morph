@@ -4,12 +4,17 @@ import { createApi } from "./app.ts";
 import { createAuth } from "./auth.ts";
 import { createDatabase } from "./database/client.ts";
 import { createPostRepository } from "./modules/posts/repository.ts";
+import { createPageAccessRepository } from "./modules/page-access/repository.ts";
 
 const port = parsePort(process.env.PORT);
 const { db, pool } = createDatabase();
 const auth = createAuth(db);
 const authHandler = toNodeHandler(auth);
-const yoga = createApi({ auth, posts: createPostRepository(db) });
+const yoga = createApi({
+  auth,
+  posts: createPostRepository(db),
+  pageAccess: createPageAccessRepository(db),
+});
 const server = createServer((request, response) => {
   if (request.url?.startsWith("/api/auth")) {
     return authHandler(request, response);

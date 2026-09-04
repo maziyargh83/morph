@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './../../../packages/plugins/src/home/routes/index'
 import { Route as AboutRouteImport } from './../../../packages/plugins/src/home/routes/about'
 import { Route as AuthIndexRouteImport } from './../../../packages/plugins/src/auth/client-routes/index'
+import { Route as AuthDeniedRouteImport } from './../../../packages/plugins/src/auth/client-routes/denied'
 import { Route as AuthLoginRouteImport } from './../../../packages/plugins/src/auth/client-routes/login'
 import { Route as PostsIndexRouteImport } from './../../../packages/plugins/src/posts/routes/index'
 import { Route as PostsSlugRouteImport } from './../../../packages/plugins/src/posts/routes/$slug'
@@ -33,6 +34,11 @@ const AboutRoute = AboutRouteImport.update({
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/auth/',
   path: '/auth/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthDeniedRoute = AuthDeniedRouteImport.update({
+  id: '/auth/denied',
+  path: '/auth/denied',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -74,6 +80,7 @@ const ShopProductDotidRoute = ShopProductDotidRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/denied': typeof AuthDeniedRoute
   '/auth/login': typeof AuthLoginRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/denied': typeof AuthDeniedRoute
   '/auth/login': typeof AuthLoginRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/denied': typeof AuthDeniedRoute
   '/auth/login': typeof AuthLoginRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/auth/denied'
     | '/auth/login'
     | '/posts/$slug'
     | '/profile/settings'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/auth/denied'
     | '/auth/login'
     | '/posts/$slug'
     | '/profile/settings'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/auth/denied'
     | '/auth/login'
     | '/posts/$slug'
     | '/profile/settings'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AuthDeniedRoute: typeof AuthDeniedRoute
   AuthLoginRoute: typeof AuthLoginRoute
   PostsSlugRoute: typeof PostsSlugRoute
   ProfileSettingsRoute: typeof ProfileSettingsRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/solid-router' {
       path: '/auth'
       fullPath: '/auth/'
       preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/denied': {
+      id: '/auth/denied'
+      path: '/auth/denied'
+      fullPath: '/auth/denied'
+      preLoaderRoute: typeof AuthDeniedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -238,6 +258,7 @@ declare module '@tanstack/solid-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AuthDeniedRoute: AuthDeniedRoute,
   AuthLoginRoute: AuthLoginRoute,
   PostsSlugRoute: PostsSlugRoute,
   ProfileSettingsRoute: ProfileSettingsRoute,

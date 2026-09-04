@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/solid-router";
+import { requireClientPageAccess } from "../../auth/client-guard.ts";
 
 export const Route = createFileRoute("/shop/product/$id")({
+  beforeLoad: () => requireClientPageAccess("/shop/product/$id"),
   component: ProductPage,
 });
 

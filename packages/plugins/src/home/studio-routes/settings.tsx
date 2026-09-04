@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/solid-router";
+import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 type SettingsTab = "general" | "members" | "integrations";
 
@@ -8,6 +9,7 @@ type SettingsSearch = {
 };
 
 export const Route = createFileRoute("/settings")({
+  beforeLoad: () => requireStudioPageAccess("/settings"),
   validateSearch: (search: Record<string, unknown>): SettingsSearch => ({
     tab: isSettingsTab(search.tab) ? search.tab : "general",
     preview: search.preview === true || search.preview === "true",

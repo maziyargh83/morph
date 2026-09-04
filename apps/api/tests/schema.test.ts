@@ -7,6 +7,7 @@ import type {
   PostRepository,
 } from "../src/modules/posts/repository.ts";
 import { createMorphSchema, type MorphGraphQLContext } from "../src/schema.ts";
+import type { PageAccessRepository } from "../src/modules/page-access/repository.ts";
 
 const records: PostRecord[] = [
   {
@@ -41,10 +42,28 @@ const posts: PostRepository = {
 
 const schema = createMorphSchema();
 
+const pageAccess: PageAccessRepository = {
+  async list() {
+    return [];
+  },
+  async decide(_host, _path, session) {
+    return session
+      ? { allowed: true, reason: "ALLOWED" }
+      : { allowed: false, reason: "AUTHENTICATION_REQUIRED" };
+  },
+  async set() {
+    throw new Error("Not used in this test.");
+  },
+  async reset() {
+    throw new Error("Not used in this test.");
+  },
+};
+
 function context(session: MorphSession | null = null): MorphGraphQLContext {
   return {
     request: new Request("http://localhost/graphql"),
     posts,
+    pageAccess,
     session,
   };
 }
@@ -68,6 +87,27 @@ test("queries the health check and plugin-owned posts", async () => {
   assert.deepEqual(result.errors, undefined);
   assert.equal(result.data?.health, "ok");
   assert.ok(Array.isArray(result.data?.posts));
+});
+
+test("returns a page access decision for route guards", async () => {
+  const result = await graphql({
+    schema,
+    source: /* GraphQL */ `
+      query {
+        pageAccessDecision(host: "client", path: "/profile") {
+          allowed
+          reason
+        }
+      }
+    `,
+    contextValue: context(),
+  });
+
+  assert.deepEqual(result.errors, undefined);
+  assert.deepEqual({ ...result.data?.pageAccessDecision }, {
+    allowed: false,
+    reason: "AUTHENTICATION_REQUIRED",
+  });
 });
 
 test("rejects post creation without an authenticated editor", async () => {

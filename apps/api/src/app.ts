@@ -2,6 +2,7 @@ import { createYoga } from "graphql-yoga";
 import type { MorphAuth } from "./auth.ts";
 import type { MorphSession } from "./auth.ts";
 import type { PostRepository } from "./modules/posts/repository.ts";
+import type { PageAccessRepository } from "./modules/page-access/repository.ts";
 import { createMorphSchema, type MorphGraphQLContext } from "./schema.ts";
 
 const developmentOrigins = [
@@ -10,7 +11,11 @@ const developmentOrigins = [
   "http://localhost:5173",
 ];
 
-export function createApi(options: { auth: MorphAuth; posts: PostRepository }) {
+export function createApi(options: {
+  auth: MorphAuth;
+  posts: PostRepository;
+  pageAccess: PageAccessRepository;
+}) {
   const configuredOrigins = process.env.TRUSTED_ORIGINS?.split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -29,6 +34,7 @@ export function createApi(options: { auth: MorphAuth; posts: PostRepository }) {
     context: async ({ request }) => ({
       request,
       posts: options.posts,
+      pageAccess: options.pageAccess,
       session: (await options.auth.api.getSession({
         headers: request.headers,
       })) as MorphSession | null,
