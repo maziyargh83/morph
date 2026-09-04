@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./auth/access": "./src/auth/access.ts"
   },
   "scripts": {
     "build": "tsc --noEmit -p tsconfig.manifest.json",
@@ -14,6 +15,7 @@
     "@morph/router": "workspace:*",
     "@tanstack/solid-router": "1.170.16",
     "@tanstack/solid-start": "1.168.26",
+    "better-auth": "^1.7.0",
     "solid-js": "^1.9.14"
   },
   "devDependencies": {

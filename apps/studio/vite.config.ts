@@ -6,6 +6,12 @@ import { routesDirectory, virtualRouteConfig } from "./routes.config.ts";
 import { studioRouteTreeGenerator } from "./route-tree-generator.ts";
 
 export default defineConfig({
+  server: {
+    proxy: {
+      "/api": "http://localhost:4000",
+      "/graphql": "http://localhost:4000",
+    },
+  },
   plugins: [
     devtools(),
     tanstackStart({

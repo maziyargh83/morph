@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './../../../packages/plugins/src/home/routes/index'
 import { Route as AboutRouteImport } from './../../../packages/plugins/src/home/routes/about'
+import { Route as AuthIndexRouteImport } from './../../../packages/plugins/src/auth/client-routes/index'
+import { Route as AuthLoginRouteImport } from './../../../packages/plugins/src/auth/client-routes/login'
 import { Route as PostsIndexRouteImport } from './../../../packages/plugins/src/posts/routes/index'
 import { Route as PostsSlugRouteImport } from './../../../packages/plugins/src/posts/routes/$slug'
 import { Route as ProfileIndexRouteImport } from './../../../packages/plugins/src/profile/routes/index'
@@ -26,6 +28,16 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsIndexRoute = PostsIndexRouteImport.update({
@@ -62,8 +74,10 @@ const ShopProductDotidRoute = ShopProductDotidRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/login': typeof AuthLoginRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
+  '/auth/': typeof AuthIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/shop/': typeof ShopIndexRoute
@@ -72,8 +86,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/login': typeof AuthLoginRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
+  '/auth': typeof AuthIndexRoute
   '/posts': typeof PostsIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/shop': typeof ShopIndexRoute
@@ -83,8 +99,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth/login': typeof AuthLoginRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/profile/settings': typeof ProfileSettingsRoute
+  '/auth/': typeof AuthIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/shop/': typeof ShopIndexRoute
@@ -95,8 +113,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/auth/login'
     | '/posts/$slug'
     | '/profile/settings'
+    | '/auth/'
     | '/posts/'
     | '/profile/'
     | '/shop/'
@@ -105,8 +125,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/auth/login'
     | '/posts/$slug'
     | '/profile/settings'
+    | '/auth'
     | '/posts'
     | '/profile'
     | '/shop'
@@ -115,8 +137,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/auth/login'
     | '/posts/$slug'
     | '/profile/settings'
+    | '/auth/'
     | '/posts/'
     | '/profile/'
     | '/shop/'
@@ -126,8 +150,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AuthLoginRoute: typeof AuthLoginRoute
   PostsSlugRoute: typeof PostsSlugRoute
   ProfileSettingsRoute: typeof ProfileSettingsRoute
+  AuthIndexRoute: typeof AuthIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ShopIndexRoute: typeof ShopIndexRoute
@@ -148,6 +174,20 @@ declare module '@tanstack/solid-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/posts/': {
@@ -198,8 +238,10 @@ declare module '@tanstack/solid-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AuthLoginRoute: AuthLoginRoute,
   PostsSlugRoute: PostsSlugRoute,
   ProfileSettingsRoute: ProfileSettingsRoute,
+  AuthIndexRoute: AuthIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   ShopIndexRoute: ShopIndexRoute,

@@ -1,100 +1,68 @@
 # Morph
 
-A minimal Solid + TanStack Router proof of concept for aggregating routes owned
-by independent plugins into one generated, type-safe application route tree.
+Morph is a Solid monorepo where feature plugins contribute routes to two apps
+and share one database-backed GraphQL API.
 
-The workspace contains two independent applications:
+## Applications
 
-- `apps/container`: the existing Solid SPA route aggregator.
-- `apps/studio`: a Solid TanStack Start application with its own virtual route
-  tree, SSR document shell, and plugin registry.
+- `apps/container` — the public Client SPA (`http://localhost:5173`)
+- `apps/studio` — the Solid Start Studio (`http://localhost:3001`)
+- `apps/api` — GraphQL Yoga and Better Auth (`http://localhost:4000`)
 
-## Architecture
+The API uses plain GraphQL SDL and resolvers; there is no schema-builder
+package. PostgreSQL access is type-safe through Drizzle ORM, and migrations are
+generated into `apps/api/drizzle`.
 
-```text
-packages/plugins/src/index.ts
-          │ package-owned plugin catalog
-          ▼
-packages/router
-          │ select `client` contributions
-          ▼
-apps/container/routes.config.ts
-          │ one TanStack Router plugin invocation
-          ▼
-apps/container/src/routeTree.gen.ts
+## Plugins
+
+`packages/plugins` owns the installed plugin catalog. Each plugin may expose a
+different route tree to Client and Studio while keeping shared contracts in one
+folder.
+
+The auth plugin provides:
+
+- Client sign-up, sign-in, account, and sign-out routes under `/auth`
+- Studio sign-in and user/role management under `/auth`
+- Better Auth sessions persisted in PostgreSQL
+- `user`, `editor`, and `admin` roles with typed post permissions
+
+GraphQL reads the Better Auth session cookie. Public users can read published
+posts; editors and admins can read drafts and create posts. The Studio user list
+and role changes require an admin session.
+
+## Local setup
+
+```sh
+pnpm install
+cp .env.example .env
+docker compose up -d postgres
+pnpm db:migrate
+pnpm db:seed
+ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD='change-this-password' pnpm auth:create-admin
+pnpm dev
 ```
 
-Studio reads the same package catalog but selects a different contribution:
+The values in `.env` are loaded by the API scripts. Replace
+`BETTER_AUTH_SECRET` before using a shared or production environment.
 
-```text
-packages/plugins/src/index.ts
-          │ package-owned plugin catalog
-          ▼
-packages/router
-          │ select `studio` contributions
-          ▼
-apps/studio/routes.config.ts
-          ▼
-apps/studio/src/routeTree.gen.ts
-```
-
-Each plugin can contribute separate route directories to one or both apps:
-
-```ts
-export const homePlugin = definePlugin({
-  name: "home",
-  apps: {
-    client: {
-      routes: {
-        directory: new URL("./routes", import.meta.url),
-        mount: "/",
-      },
-    },
-    studio: {
-      routes: {
-        directory: new URL("./studio-routes", import.meta.url),
-        mount: "/",
-      },
-    },
-  },
-});
-```
-
-A cross-app plugin keeps all of its concerns in one folder while exposing
-separate application surfaces:
-
-```text
-packages/plugins/src/posts/
-├── main.ts                 # client + studio manifest
-├── content.ts              # shared, client-safe contracts and content
-├── routes/                 # public Client routes
-├── studio-routes/          # Studio authoring routes and server functions
-└── server/                 # server-only authoring implementation
-```
-
-The `posts` example serves public reading routes at `/posts` in the Client and
-an SSR authoring list plus a validated POST server function at `/posts/new` in
-Studio.
-
-Both applications import only the manifest catalog during build configuration.
-The router projects either `client` or `studio` before route generation, so only
-the selected physical route directory enters that application's route tree and
-runtime bundle. Manifest imports do not import route components.
-
-Use `mount: '/'` to merge a plugin's routes at the current level. Namespaced
-mounts such as `/shop` keep the namespace in the URL. TanStack's generator
-reports route conflicts during generation.
+GraphiQL is available at `http://localhost:4000/graphql` in development. Both
+frontends proxy `/graphql` and `/api/auth` to the API, so auth cookies stay
+same-origin in local development.
 
 ## Commands
 
 ```sh
-pnpm install
-pnpm dev
 pnpm check-types
+pnpm test
 pnpm build
+
+pnpm db:generate
+pnpm db:migrate
+pnpm db:push
+pnpm db:seed
+pnpm auth:create-admin
 ```
 
-The Studio route tree is regenerated with TanStack's generator API during
-development, before type checks, and after production builds. Plugin route
-source remains inside `packages/plugins`; no generated trees are parsed or
-merged after the fact.
+Route trees are generated from the plugin catalog before type checks and
+production builds. Generated TypeScript and SQL migrations are committed;
+runtime build output is ignored.

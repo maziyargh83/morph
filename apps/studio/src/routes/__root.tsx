@@ -66,6 +66,12 @@ function RootDocument() {
               <Link activeProps={{ class: "active" }} to="/posts">
                 Posts
               </Link>
+          <Link activeProps={{ class: "active" }} to="/auth">
+            Access
+          </Link>
+          <Link activeProps={{ class: "active" }} to="/auth/login">
+            Login
+          </Link>
               <Link activeProps={{ class: "active" }} to="/settings">
                 Settings
               </Link>

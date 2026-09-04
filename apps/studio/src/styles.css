@@ -439,6 +439,41 @@ p {
   background: rgb(255 105 82 / 10%);
 }
 
+.auth-card {
+  display: grid;
+  width: min(620px, 100%);
+  gap: 24px;
+}
+
+.text-button {
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  color: #c7bbff;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.role-picker select {
+  padding: 8px 10px;
+  border: 1px solid rgb(235 237 240 / 14%);
+  border-radius: 9px;
+  color: #ebedf0;
+  background: #20232b;
+  font: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 code {
   padding: 0.14em 0.38em;
   border-radius: 6px;

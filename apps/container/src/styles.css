@@ -148,6 +148,77 @@ code {
   font-size: 0.9rem;
   line-height: 1.5;
 }
+.auth-card {
+  display: grid;
+  width: min(620px, 100%);
+  gap: 24px;
+}
+.editor-form {
+  display: grid;
+  gap: 16px;
+}
+.editor-form label {
+  display: grid;
+  gap: 7px;
+  color: #686a64;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.editor-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgb(32 33 31 / 16%);
+  border-radius: 10px;
+  outline: none;
+  background: rgb(255 255 255 / 70%);
+  font: inherit;
+}
+.editor-form input:focus {
+  border-color: #9e321b;
+}
+.editor-form .button,
+.auth-card .button {
+  width: fit-content;
+  border: 0;
+  cursor: pointer;
+}
+.text-button {
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  color: #9e321b;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.auth-details {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+.auth-details div {
+  display: grid;
+  gap: 4px;
+}
+.auth-details dt {
+  color: #888a83;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.auth-details dd {
+  margin: 0;
+}
+.notice {
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+.notice.error {
+  color: #8f2c19;
+  background: rgb(222 77 45 / 10%);
+}
 footer {
   padding: 24px 0 32px;
   color: #888a83;

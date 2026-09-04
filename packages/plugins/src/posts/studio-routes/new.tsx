@@ -1,24 +1,6 @@
 import { Show, createSignal } from "solid-js";
-import { Link, createFileRoute, useRouter } from "@tanstack/solid-router";
-import { createServerFn } from "@tanstack/solid-start";
-import {
-  createStudioPost,
-  type CreatePostInput,
-} from "../server/posts.server.ts";
-
-const createPost = createServerFn({ method: "POST" })
-  .validator((input: CreatePostInput) => {
-    const title = input.title.trim();
-    const excerpt = input.excerpt.trim();
-    const body = input.body.trim();
-
-    if (!title || !excerpt || !body) {
-      throw new Error("Title, excerpt, and body are required.");
-    }
-
-    return { title, excerpt, body };
-  })
-  .handler(async ({ data }) => createStudioPost(data));
+import { Link, createFileRoute } from "@tanstack/solid-router";
+import { createPost } from "../graphql-client.ts";
 
 export const Route = createFileRoute("/posts/new")({
   head: () => ({ meta: [{ title: "New post · Morph Studio" }] }),
@@ -26,7 +8,6 @@ export const Route = createFileRoute("/posts/new")({
 });
 
 function NewPost() {
-  const router = useRouter();
   const [createdSlug, setCreatedSlug] = createSignal<string>();
   const [error, setError] = createSignal<string>();
   const [submitting, setSubmitting] = createSignal(false);
@@ -41,15 +22,12 @@ function NewPost() {
 
     try {
       const post = await createPost({
-        data: {
-          title: String(formData.get("title") ?? ""),
-          excerpt: String(formData.get("excerpt") ?? ""),
-          body: String(formData.get("body") ?? ""),
-        },
+        title: String(formData.get("title") ?? ""),
+        excerpt: String(formData.get("excerpt") ?? ""),
+        body: String(formData.get("body") ?? ""),
       });
       setCreatedSlug(post.slug);
       form.reset();
-      await router.invalidate();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save post.");
     } finally {
@@ -63,7 +41,7 @@ function NewPost() {
         ← All posts
       </Link>
       <div>
-        <p class="eyebrow">POST server function + validation</p>
+        <p class="eyebrow">GraphQL mutation · editor access</p>
         <h1>New post</h1>
       </div>
 
@@ -93,8 +71,7 @@ function NewPost() {
       <Show when={createdSlug()}>
         {(slug) => (
           <p class="notice success">
-            Draft saved as <code>{slug()}</code>. The Studio loader has been
-            invalidated.
+            Draft <code>{slug()}</code> was saved in PostgreSQL.
           </p>
         )}
       </Show>

@@ -1,20 +1,26 @@
-import { For } from "solid-js";
+import { For, createSignal, onMount } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
-import { createServerFn } from "@tanstack/solid-start";
-import { listStudioPosts } from "../server/posts.server.ts";
-
-const getStudioPosts = createServerFn({ method: "GET" }).handler(async () =>
-  listStudioPosts(),
-);
+import type { Post } from "../content.ts";
+import { listPosts } from "../graphql-client.ts";
 
 export const Route = createFileRoute("/posts/")({
-  loader: () => getStudioPosts(),
   head: () => ({ meta: [{ title: "Posts · Morph Studio" }] }),
   component: StudioPosts,
 });
 
 function StudioPosts() {
-  const posts = Route.useLoaderData();
+  const [posts, setPosts] = createSignal<Post[]>([]);
+  const [error, setError] = createSignal<string>();
+
+  onMount(async () => {
+    try {
+      setPosts(await listPosts({ includeDrafts: true }));
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not load posts.",
+      );
+    }
+  });
 
   return (
     <section class="page-section">
@@ -45,6 +51,7 @@ function StudioPosts() {
           )}
         </For>
       </div>
+      {error() && <p class="notice error">{error()}</p>}
     </section>
   );
 }

@@ -3,8 +3,14 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "db:generate": "pnpm --filter @morph/api db:generate",
+    "db:migrate": "pnpm --filter @morph/api db:migrate",
+    "db:push": "pnpm --filter @morph/api db:push",
+    "db:seed": "pnpm --filter @morph/api db:seed",
+    "auth:create-admin": "pnpm --filter @morph/api auth:create-admin",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,css,json,md}\"",
+    "test": "turbo run test",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {

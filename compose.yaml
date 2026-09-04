@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: morph
+      POSTGRES_USER: morph
+      POSTGRES_PASSWORD: morph
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U morph -d morph"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - morph-postgres:/var/lib/postgresql/data
+
+volumes:
+  morph-postgres:

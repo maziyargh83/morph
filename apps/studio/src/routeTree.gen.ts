@@ -15,8 +15,10 @@ import { Route as ActivityRouteImport } from './../../../packages/plugins/src/ho
 import { Route as IndexRouteImport } from './../../../packages/plugins/src/home/studio-routes/index'
 import { Route as ProjectsDotindexRouteImport } from './../../../packages/plugins/src/home/studio-routes/projects.index'
 import { Route as PostsIndexRouteImport } from './../../../packages/plugins/src/posts/studio-routes/index'
+import { Route as AuthIndexRouteImport } from './../../../packages/plugins/src/auth/studio-routes/index'
 import { Route as ProjectsDotprojectIdRouteImport } from './../../../packages/plugins/src/home/studio-routes/projects.$projectId'
 import { Route as PostsNewRouteImport } from './../../../packages/plugins/src/posts/studio-routes/new'
+import { Route as AuthLoginRouteImport } from './../../../packages/plugins/src/auth/studio-routes/login'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -48,6 +50,11 @@ const PostsIndexRoute = PostsIndexRouteImport.update({
   path: '/posts/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsDotprojectIdRoute = ProjectsDotprojectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
@@ -58,14 +65,21 @@ const PostsNewRoute = PostsNewRouteImport.update({
   path: '/posts/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/auth/login': typeof AuthLoginRoute
   '/posts/new': typeof PostsNewRoute
   '/projects/$projectId': typeof ProjectsDotprojectIdRoute
+  '/auth/': typeof AuthIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/projects/': typeof ProjectsDotindexRoute
 }
@@ -73,8 +87,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/settings': typeof SettingsRoute
+  '/auth/login': typeof AuthLoginRoute
   '/posts/new': typeof PostsNewRoute
   '/projects/$projectId': typeof ProjectsDotprojectIdRoute
+  '/auth': typeof AuthIndexRoute
   '/posts': typeof PostsIndexRoute
   '/projects': typeof ProjectsDotindexRoute
 }
@@ -84,8 +100,10 @@ export interface FileRoutesById {
   '/activity': typeof ActivityRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/auth/login': typeof AuthLoginRoute
   '/posts/new': typeof PostsNewRoute
   '/projects/$projectId': typeof ProjectsDotprojectIdRoute
+  '/auth/': typeof AuthIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/projects/': typeof ProjectsDotindexRoute
 }
@@ -96,8 +114,10 @@ export interface FileRouteTypes {
     | '/activity'
     | '/projects'
     | '/settings'
+    | '/auth/login'
     | '/posts/new'
     | '/projects/$projectId'
+    | '/auth/'
     | '/posts/'
     | '/projects/'
   fileRoutesByTo: FileRoutesByTo
@@ -105,8 +125,10 @@ export interface FileRouteTypes {
     | '/'
     | '/activity'
     | '/settings'
+    | '/auth/login'
     | '/posts/new'
     | '/projects/$projectId'
+    | '/auth'
     | '/posts'
     | '/projects'
   id:
@@ -115,8 +137,10 @@ export interface FileRouteTypes {
     | '/activity'
     | '/projects'
     | '/settings'
+    | '/auth/login'
     | '/posts/new'
     | '/projects/$projectId'
+    | '/auth/'
     | '/posts/'
     | '/projects/'
   fileRoutesById: FileRoutesById
@@ -126,7 +150,9 @@ export interface RootRouteChildren {
   ActivityRoute: typeof ActivityRoute
   ProjectsRoute: typeof ProjectsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
+  AuthLoginRoute: typeof AuthLoginRoute
   PostsNewRoute: typeof PostsNewRoute
+  AuthIndexRoute: typeof AuthIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
 }
 
@@ -174,6 +200,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof PostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$projectId': {
       id: '/projects/$projectId'
       path: '/$projectId'
@@ -186,6 +219,13 @@ declare module '@tanstack/solid-router' {
       path: '/posts/new'
       fullPath: '/posts/new'
       preLoaderRoute: typeof PostsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -210,7 +250,9 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityRoute: ActivityRoute,
   ProjectsRoute: ProjectsRouteWithChildren,
   SettingsRoute: SettingsRoute,
+  AuthLoginRoute: AuthLoginRoute,
   PostsNewRoute: PostsNewRoute,
+  AuthIndexRoute: AuthIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,0 +1,33 @@
+{
+  "name": "@morph/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check-types": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:seed": "node --env-file-if-exists=../../.env --experimental-strip-types src/database/seed.ts",
+    "auth:create-admin": "node --env-file-if-exists=../../.env --experimental-strip-types src/database/create-admin.ts",
+    "dev": "node --env-file-if-exists=../../.env --experimental-strip-types --watch src/server.ts",
+    "start": "node --env-file-if-exists=../../.env dist/server.js",
+    "test": "node --experimental-strip-types --test tests/**/*.test.ts"
+  },
+  "dependencies": {
+    "@morph/plugins": "workspace:*",
+    "better-auth": "^1.7.0",
+    "drizzle-orm": "^0.45.2",
+    "graphql": "^16.0.0",
+    "graphql-yoga": "^5.0.0",
+    "pg": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/pg": "^8.0.0",
+    "drizzle-kit": "^0.31.0",
+    "typescript": "^5.9.2",
+    "vite": "^8.2.1"
+  }
+}

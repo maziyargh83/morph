@@ -1,12 +1,26 @@
-import { For } from "solid-js";
+import { For, createSignal, onMount } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
-import { publishedPosts } from "../content.ts";
+import type { Post } from "../content.ts";
+import { listPosts } from "../graphql-client.ts";
 
 export const Route = createFileRoute("/posts/")({
   component: PublicPosts,
 });
 
 function PublicPosts() {
+  const [posts, setPosts] = createSignal<Post[]>([]);
+  const [error, setError] = createSignal<string>();
+
+  onMount(async () => {
+    try {
+      setPosts(await listPosts());
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not load posts.",
+      );
+    }
+  });
+
   return (
     <section class="panel">
       <p class="eyebrow">Posts plugin · Client contribution</p>
@@ -16,7 +30,7 @@ function PublicPosts() {
         authoring belongs to the same plugin's Studio contribution.
       </p>
       <div class="post-list">
-        <For each={publishedPosts}>
+        <For each={posts()}>
           {(post) => (
             <Link
               class="post-row"
@@ -29,6 +43,7 @@ function PublicPosts() {
           )}
         </For>
       </div>
+      {error() && <p class="notice error">{error()}</p>}
     </section>
   );
 }

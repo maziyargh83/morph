@@ -5,5 +5,10 @@
     "jsxImportSource": "solid-js",
     "types": ["node", "vite/client"]
   },
-  "include": ["src", "routes.config.ts", "vite.config.ts"]
+  "include": [
+    "src",
+    "route-tree-generator.ts",
+    "routes.config.ts",
+    "vite.config.ts"
+  ]
 }
