@@ -1,7 +1,7 @@
 import { For } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
+import { morphPage } from "@morph/router/solid";
 import { createServerFn } from "@tanstack/solid-start";
-import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 type Project = {
   id: string;
@@ -38,7 +38,7 @@ const getProjects = createServerFn({ method: "GET" }).handler(
 );
 
 export const Route = createFileRoute("/projects/")({
-  beforeLoad: () => requireStudioPageAccess("/projects"),
+  beforeLoad: morphPage,
   loader: () => getProjects(),
   head: () => ({ meta: [{ title: "Projects · Morph Studio" }] }),
   pendingComponent: () => <div class="panel">Loading projects…</div>,

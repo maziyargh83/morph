@@ -1,27 +1,26 @@
-import { For, createSignal, onMount } from "solid-js";
+import { For } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
-import type { Post } from "../content.ts";
-import { listPosts } from "../graphql-client.ts";
-import { requireClientPageAccess } from "../../auth/client-guard.ts";
+import { morphPage } from "@morph/router/solid";
+import { listPublishedPosts } from "../client-server.ts";
 
 export const Route = createFileRoute("/posts/")({
-  beforeLoad: () => requireClientPageAccess("/posts"),
+  beforeLoad: morphPage,
+  loader: () => listPublishedPosts(),
+  head: () => ({
+    meta: [
+      { title: "Published posts · Morph" },
+      {
+        name: "description",
+        content: "Published posts rendered by the Morph SSR Client.",
+      },
+    ],
+  }),
+  pendingComponent: () => <section class="panel">Loading posts…</section>,
   component: PublicPosts,
 });
 
 function PublicPosts() {
-  const [posts, setPosts] = createSignal<Post[]>([]);
-  const [error, setError] = createSignal<string>();
-
-  onMount(async () => {
-    try {
-      setPosts(await listPosts());
-    } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : "Could not load posts.",
-      );
-    }
-  });
+  const posts = Route.useLoaderData();
 
   return (
     <section class="panel">
@@ -45,7 +44,6 @@ function PublicPosts() {
           )}
         </For>
       </div>
-      {error() && <p class="notice error">{error()}</p>}
     </section>
   );
 }

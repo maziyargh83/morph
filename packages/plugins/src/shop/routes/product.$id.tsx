@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/solid-router";
-import { requireClientPageAccess } from "../../auth/client-guard.ts";
+import { morphPage } from "@morph/router/solid";
 
 export const Route = createFileRoute("/shop/product/$id")({
-  beforeLoad: () => requireClientPageAccess("/shop/product/$id"),
+  beforeLoad: morphPage,
   component: ProductPage,
 });
 

@@ -5,7 +5,7 @@ and share one database-backed GraphQL API.
 
 ## Applications
 
-- `apps/container` — the public Client SPA (`http://localhost:5173`)
+- `apps/container` — the public TanStack Start SSR Client (`http://localhost:5173`)
 - `apps/studio` — the Solid Start Studio (`http://localhost:3001`)
 - `apps/api` — GraphQL Yoga and Better Auth (`http://localhost:4000`)
 
@@ -28,8 +28,9 @@ The auth plugin provides:
 - database-backed page policies managed from the Studio access screen
 
 GraphQL reads the Better Auth session cookie. Public users can read published
-posts; editors and admins can read drafts and create posts. The Studio user list
-and role changes require an admin session.
+posts; editors and admins can read drafts and create posts. The Client renders
+plugin routes and public post loaders on the server, then hydrates them in the
+browser. The Studio user list and role changes require an admin session.
 
 Each non-system page is declared by its owning plugin with a default access
 mode. An admin can open Studio `/auth` and override it as public, available to
@@ -37,6 +38,26 @@ any authenticated user, or restricted to selected roles. Client guards run
 before navigation, Studio guards run during SSR, and GraphQL remains the final
 authorization boundary. Login, access management, and access-denied routes are
 system routes and cannot be overridden, preventing accidental lockout.
+
+### Protected plugin routes
+
+Plugin pages use Morph's route middleware while keeping TanStack's constructor
+so its file-route generator and type inference continue to work:
+
+```tsx
+import { createFileRoute } from "@tanstack/solid-router";
+import { morphPage } from "@morph/router/solid";
+
+export const Route = createFileRoute("/posts/new")({
+  beforeLoad: morphPage,
+  component: NewPost,
+});
+```
+
+`morphPage` reads the generated route id, then delegates to the Client or Studio
+access adapter supplied by that app's router context. Route files do not repeat
+their path and do not import app-specific guards. System auth routes omit
+`morphPage` deliberately.
 
 ## Local setup
 

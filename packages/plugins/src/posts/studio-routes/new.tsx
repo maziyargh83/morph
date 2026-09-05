@@ -1,10 +1,10 @@
 import { Show, createSignal } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
+import { morphPage } from "@morph/router/solid";
 import { createPost } from "../graphql-client.ts";
-import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 export const Route = createFileRoute("/posts/new")({
-  beforeLoad: () => requireStudioPageAccess("/posts/new"),
+  beforeLoad: morphPage,
   head: () => ({ meta: [{ title: "New post · Morph Studio" }] }),
   component: NewPost,
 });

@@ -5,7 +5,10 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./auth/access": "./src/auth/access.ts"
+    "./auth/access": "./src/auth/access.ts",
+    "./auth/client-guard": "./src/auth/client-guard.ts",
+    "./auth/client-ssr-guard": "./src/auth/client-ssr-guard.ts",
+    "./auth/studio-guard": "./src/auth/studio-guard.ts"
   },
   "scripts": {
     "build": "tsc --noEmit -p tsconfig.manifest.json",

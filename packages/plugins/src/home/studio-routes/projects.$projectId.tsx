@@ -1,6 +1,6 @@
-import { Link, createFileRoute, notFound } from "@tanstack/solid-router";
+import { Link, notFound, createFileRoute } from "@tanstack/solid-router";
+import { morphPage } from "@morph/router/solid";
 import { createServerFn } from "@tanstack/solid-start";
-import { requireStudioPageAccess } from "../../auth/studio-guard.ts";
 
 type ProjectDetail = {
   id: string;
@@ -47,7 +47,7 @@ const getProject = createServerFn({ method: "GET" })
   });
 
 export const Route = createFileRoute("/projects/$projectId")({
-  beforeLoad: () => requireStudioPageAccess("/projects/$projectId"),
+  beforeLoad: morphPage,
   loader: ({ params }) => getProject({ data: params.projectId }),
   head: () => ({ meta: [{ title: "Project · Morph Studio" }] }),
   notFoundComponent: () => (

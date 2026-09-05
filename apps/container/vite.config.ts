@@ -1,8 +1,9 @@
 import { devtools } from "@tanstack/devtools-vite";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { tanstackStart } from "@tanstack/solid-start/plugin/vite";
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import { routesDirectory, virtualRouteConfig } from "./routes.config.ts";
+import { clientRouteTreeGenerator } from "./route-tree-generator.ts";
 
 export default defineConfig({
   server: {
@@ -13,12 +14,14 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
-    tanstackRouter({
-      target: "solid",
-      routesDirectory,
-      generatedRouteTree: "./src/routeTree.gen.ts",
-      virtualRouteConfig,
+    tanstackStart({
+      router: {
+        routesDirectory,
+        generatedRouteTree: "./routeTree.gen.ts",
+        virtualRouteConfig,
+      },
     }),
-    solid(),
+    clientRouteTreeGenerator(),
+    solid({ ssr: true }),
   ],
 });

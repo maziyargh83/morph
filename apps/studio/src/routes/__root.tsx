@@ -3,15 +3,16 @@ import {
   Link,
   Outlet,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
   useRouter,
 } from "@tanstack/solid-router";
+import type { MorphRouterContext } from "@morph/router/solid";
 import { HydrationScript } from "solid-js/web";
 import "../styles.css";
 import { TanStackDevtools } from "@tanstack/solid-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/solid-router-devtools";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<MorphRouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -66,12 +67,12 @@ function RootDocument() {
               <Link activeProps={{ class: "active" }} to="/posts">
                 Posts
               </Link>
-          <Link activeProps={{ class: "active" }} to="/auth">
-            Access
-          </Link>
-          <Link activeProps={{ class: "active" }} to="/auth/login">
-            Login
-          </Link>
+              <Link activeProps={{ class: "active" }} to="/auth">
+                Access
+              </Link>
+              <Link activeProps={{ class: "active" }} to="/auth/login">
+                Login
+              </Link>
               <Link activeProps={{ class: "active" }} to="/settings">
                 Settings
               </Link>

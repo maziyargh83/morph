@@ -104,10 +104,18 @@ test("returns a page access decision for route guards", async () => {
   });
 
   assert.deepEqual(result.errors, undefined);
-  assert.deepEqual({ ...result.data?.pageAccessDecision }, {
-    allowed: false,
-    reason: "AUTHENTICATION_REQUIRED",
-  });
+  const decision = result.data?.pageAccessDecision as {
+    allowed: boolean;
+    reason: string;
+  };
+
+  assert.deepEqual(
+    { ...decision },
+    {
+      allowed: false,
+      reason: "AUTHENTICATION_REQUIRED",
+    },
+  );
 });
 
 test("rejects post creation without an authenticated editor", async () => {

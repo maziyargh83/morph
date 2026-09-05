@@ -1,34 +1,38 @@
-import { Show, createSignal, onMount } from "solid-js";
+import { Show } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
-import type { Post } from "../content.ts";
-import { getPost } from "../graphql-client.ts";
-import { requireClientPageAccess } from "../../auth/client-guard.ts";
+import { morphPage } from "@morph/router/solid";
+import { getPublishedPost } from "../client-server.ts";
 
 export const Route = createFileRoute("/posts/$slug")({
-  beforeLoad: () => requireClientPageAccess("/posts/$slug"),
+  beforeLoad: morphPage,
+  loader: ({ params }) => getPublishedPost({ data: params.slug }),
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: loaderData ? `${loaderData.title} · Morph` : "Post · Morph" },
+      ...(loaderData
+        ? [{ name: "description", content: loaderData.excerpt }]
+        : []),
+    ],
+  }),
+  pendingComponent: () => <section class="panel">Loading post…</section>,
   component: PublicPost,
 });
 
 function PublicPost() {
-  const params = Route.useParams();
-  const [post, setPost] = createSignal<Post | null>();
-
-  onMount(async () => setPost(await getPost(params().slug)));
+  const post = Route.useLoaderData();
 
   return (
-    <Show when={post() !== undefined} fallback={<p>Loading post…</p>}>
-      <Show when={post()} fallback={<p>Post not found.</p>}>
-        {(current) => (
-          <article class="panel">
-            <p class="eyebrow">Published · {current().updatedAt}</p>
-            <h1>{current().title}</h1>
-            <p>{current().body}</p>
-            <Link class="button" to="/posts">
-              Back to posts
-            </Link>
-          </article>
-        )}
-      </Show>
+    <Show when={post()} fallback={<p>Post not found.</p>}>
+      {(current) => (
+        <article class="panel">
+          <p class="eyebrow">Published · {current().updatedAt}</p>
+          <h1>{current().title}</h1>
+          <p>{current().body}</p>
+          <Link class="button" to="/posts">
+            Back to posts
+          </Link>
+        </article>
+      )}
     </Show>
   );
 }
