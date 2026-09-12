@@ -76,7 +76,7 @@ async function requestGraphQL<TData, TVariables>(
   query: string,
   variables: TVariables,
 ): Promise<TData> {
-  const response = await fetch("/graphql", {
+  const response = await fetch(getGraphQLEndpoint(), {
     method: "POST",
     headers: { "content-type": "application/json" },
     credentials: "include",
@@ -89,4 +89,11 @@ async function requestGraphQL<TData, TVariables>(
   }
   if (!payload.data) throw new Error("GraphQL returned no data.");
   return payload.data;
+}
+
+function getGraphQLEndpoint() {
+  if (typeof window === "undefined") {
+    return `${process.env.MORPH_API_URL ?? "http://localhost:4000"}/graphql`;
+  }
+  return "/graphql";
 }

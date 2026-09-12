@@ -1,11 +1,11 @@
 import { For } from "solid-js";
 import { Link, createFileRoute } from "@tanstack/solid-router";
 import { morphPage } from "@morph/router/solid";
-import { listPublishedPosts } from "../client-server.ts";
+import { listPosts } from "../graphql-client.ts";
 
 export const Route = createFileRoute("/posts/")({
   beforeLoad: morphPage,
-  loader: () => listPublishedPosts(),
+  loader: () => listPosts(),
   head: () => ({
     meta: [
       { title: "Published posts · Morph" },

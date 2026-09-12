@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "create:client": "node --experimental-strip-types packages/create-morph/src/cli.ts",
+    "morph": "node --experimental-strip-types packages/create-morph/src/cli.ts",
     "db:generate": "pnpm --filter @morph/api db:generate",
     "db:migrate": "pnpm --filter @morph/api db:migrate",
     "db:push": "pnpm --filter @morph/api db:push",
